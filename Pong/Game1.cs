@@ -11,7 +11,7 @@ namespace Pong
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 		Vector2 positiebal, positierood, positieblauw, snelheidbal;
-		Texture2D bal, rood, blauw;
+		Texture2D rood, blauw;
 		private float speed = 10;
 		private int levenrood = 3;
 		private int levenblauw = 3;
@@ -35,12 +35,12 @@ namespace Pong
         { 
             base.Initialize();
             gameState = GameState.init;
+			balletjes.Add(new Balletje(new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2)));
         }
 
 		protected override void LoadContent()
 		{
 			spriteBatch = new SpriteBatch(GraphicsDevice);
-			bal = Content.Load<Texture2D>("bal");
 			rood = Content.Load<Texture2D>("rodeSpeler");
 			blauw = Content.Load<Texture2D>("blauweSpeler");
 
@@ -52,10 +52,6 @@ namespace Pong
             //balken klaarzetten
 			positierood = new Vector2(50, (GraphicsDevice.Viewport.Height - rood.Height) / 2);
 			positieblauw = new Vector2(lijnblauw, (GraphicsDevice.Viewport.Height - blauw.Height) / 2);
-
-            //Bal in het midden zetten
-            positiebal.X = (GraphicsDevice.Viewport.Width - bal.Width) / 2;
-            positiebal.Y = (GraphicsDevice.Viewport.Height - bal.Height) / 2;
         }
 
 		protected override void UnloadContent()
@@ -87,9 +83,9 @@ namespace Pong
 			snelheidbal = new Vector2((float)Math.Cos(angle) * 4, (float)Math.Sin(angle) * 4);
 		}
 
-		protected void BalBounds(ref Vector2 posbal, ref Vector2 sbal)
+		protected void BalBounds()
 		{
-			if (posbal.Y + sbal.Y < 0)
+			if (balletjes[0].Position.Y + sbal.Y < 0)
 				sbal.Y *= -1;
 
 			if (posbal.Y + sbal.Y > GraphicsDevice.Viewport.Height - bal.Height)
@@ -164,7 +160,7 @@ namespace Pong
 			spriteBatch.Begin();
 			spriteBatch.Draw(rood, positierood, Color.White);
 			spriteBatch.Draw(blauw, positieblauw, Color.White);
-			foreach (Balletje bal in balletje)
+			foreach (Balletje balletje in balletjes)
 			{
 				balletje.Draw(spriteBatch);
 			}
