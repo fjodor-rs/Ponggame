@@ -11,38 +11,64 @@ namespace Pong
 {
 	class Balletje
 	{
-		static Texture2D balletjeTexture;
+		Texture2D texture;
 		Vector2 position;
-
 		Vector2 speed;
 
-		public static void LoadContent(ContentManager content)
+		readonly Random rand = new Random();
+
+
+		public void LoadContent(ContentManager content)
 		{
-			balletjeTexture = content.Load<Texture2D>("bal");
 		}
 
-		public Balletje(Vector2 position)
+		public Balletje(Vector2 position, Texture2D texture)
 		{
 			this.position = position;
+			this.texture = texture;
+			BalReset();
 		}
 
-		public Vector2 Position{ get { return position; } }
+		public Vector2 Speed { get { return speed; } }
+
+		public int Width { get { return texture.Width; } }
+
+		public int Height { get { return texture.Height; } }
+
+		public Vector2 Position { get { return position; } }
 
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(balletjeTexture, position, Color.White);
+			spriteBatch.Draw(texture, position, Color.White);
 		}
 
-		public void balDelete()
+		public void BalDelete()
 		{
 		}
-	//	protected void BalReset()
-	//	{
-	//		position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
-		//	var angle = rand.NextDouble() * MathHelper.TwoPi;
-		//	snelheidbal = new Vector2((float)Math.Cos(angle) * 4, (float)Math.Sin(angle) * 4);
-		//}
 
+		//De bal versnellen
+		public void Bounce()
+		{
+			speed.X *= -1;
+			speed.Y *= 1.08f;
+			speed.X *= 1.08f;
+		}
 
+		public void BalLimit()
+		{
+			speed.Y *= -1;
+		}
+
+		public void BalReset()
+		{
+			position = new Vector2(800 / 2, 480 / 2);
+			var angle = rand.NextDouble() * MathHelper.TwoPi;
+			speed = new Vector2((float)Math.Cos(angle) * 4, (float)Math.Sin(angle) * 4);
+		}
+
+		public void Update()
+		{
+			position += speed;
+		}
 	}
 }
