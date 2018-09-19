@@ -27,7 +27,7 @@ namespace Pong
 
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(balletjeTexture, position, Color.White)
+            spriteBatch.Draw(balletjeTexture, position, Color.White);
 		}
 
 	}

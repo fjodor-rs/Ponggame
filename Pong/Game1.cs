@@ -21,6 +21,9 @@ namespace Pong
         GameState gameState;
 		readonly Random rand = new Random();
 		List<Balletje> balletjes = new List<Balletje>();
+        SpriteFont font1;
+        string startMessage;
+        Vector2 messageSize;
 
 
 
@@ -35,6 +38,8 @@ namespace Pong
         { 
             base.Initialize();
             gameState = GameState.init;
+            startMessage = "Druk op spatie om te beginnen";
+            messageSize = font1.MeasureString(startMessage);
         }
 
 		protected override void LoadContent()
@@ -43,11 +48,13 @@ namespace Pong
 			bal = Content.Load<Texture2D>("bal");
 			rood = Content.Load<Texture2D>("rodeSpeler");
 			blauw = Content.Load<Texture2D>("blauweSpeler");
+            font1 = Content.Load<SpriteFont>("font1");
+            
 
-			Balletje.LoadContent(Content);
+            Balletje.LoadContent(Content);
 
 			lijnrood = 50 + rood.Width;
-			lijnblauw = GraphicsDevice.Viewport.Width - 50;
+			lijnblauw = GraphicsDevice.Viewport.Width - (50 + blauw.Width);
 
             //balken klaarzetten
 			positierood = new Vector2(50, (GraphicsDevice.Viewport.Height - rood.Height) / 2);
@@ -89,15 +96,19 @@ namespace Pong
 
 		protected void BalBounds()
 		{
+            //stuiteren op de bovenwand
 			if (positiebal.Y + snelheidbal.Y < 0)
 				snelheidbal.Y *= -1;
 
-			if (positiebal.Y + snelheidbal.Y > GraphicsDevice.Viewport.Height - bal.Height)
+            //stuiteren op de onderwand
+            if (positiebal.Y + snelheidbal.Y > GraphicsDevice.Viewport.Height - bal.Height)
 				snelheidbal.Y *= -1;
 
+            //stuiteren op de rode balk
 			if (positiebal.X + snelheidbal.X <= lijnrood && positiebal.X > lijnrood && positiebal.Y > positierood.Y - bal.Height && positiebal.Y < positierood.Y + rood.Height)
 				Bounce();
 
+            //stuiteren op de blauwe balk
 			if (positiebal.X + snelheidbal.X + bal.Width >= lijnblauw && positiebal.X + bal.Width < lijnblauw && positiebal.Y > positieblauw.Y - bal.Height && positiebal.Y < positieblauw.Y + blauw.Height)
 				Bounce();
 
@@ -138,6 +149,7 @@ namespace Pong
 
             if (gameState == GameState.init && Keyboard.GetState().IsKeyDown(Keys.Space))
             {
+                // start het spel
                 gameState = GameState.running;
                 BalReset();
             }
@@ -162,11 +174,17 @@ namespace Pong
 		{
 			GraphicsDevice.Clear(Color.White);
 			spriteBatch.Begin();
+
+            if (gameState == GameState.init)
+            {
+                spriteBatch.DrawString(font1, startMessage, new Vector2((GraphicsDevice.Viewport.Width - messageSize.X) / 2, (GraphicsDevice.Viewport.Height - messageSize.Y) / 2), Color.Black);
+
+            }
 			spriteBatch.Draw(rood, positierood, Color.White);
 			spriteBatch.Draw(blauw, positieblauw, Color.White);
-			foreach (Balletje bal in balletje)
+			foreach (Balletje bal in balletjes)
 			{
-				balletje.Draw(spriteBatch);
+				bal.Draw(spriteBatch);
 			}
 			base.Draw(gameTime);
 			spriteBatch.End();
