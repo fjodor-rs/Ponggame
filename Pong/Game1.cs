@@ -23,6 +23,9 @@ namespace Pong
         enum GameState { init, running, gameOver };
         GameState gameState;
 		List<Balletje> balletjes = new List<Balletje>();
+        SpriteFont font1;
+        string startMessage;
+        Vector2 messageSize;
 
 
 
@@ -37,6 +40,9 @@ namespace Pong
         { 
             base.Initialize();
             gameState = GameState.init;
+            startMessage = "Druk op spatie om te beginnen";
+            messageSize = font1.MeasureString(startMessage);
+
 			screenheight = GraphicsDevice.Viewport.Height;
 			screenwidth = GraphicsDevice.Viewport.Width;
 			balletjes.Add(new Balletje(new Vector2(screenheight / 2, screenwidth / 2), bal));
@@ -49,12 +55,13 @@ namespace Pong
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			rood = Content.Load<Texture2D>("rodeSpeler");
 			blauw = Content.Load<Texture2D>("blauweSpeler");
+            font1 = Content.Load<SpriteFont>("font1");
+            
 			bal = Content.Load<Texture2D>("bal");
 			
-			Console.WriteLine("Console");
 
 			lijnrood = 50 + rood.Width;
-			lijnblauw = GraphicsDevice.Viewport.Width - 50;
+			lijnblauw = GraphicsDevice.Viewport.Width - (50 + blauw.Width);
 
             //balken klaarzetten
 			positierood = new Vector2(50, (GraphicsDevice.Viewport.Height - rood.Height) / 2);
@@ -129,6 +136,7 @@ namespace Pong
 
             if (gameState == GameState.init && Keyboard.GetState().IsKeyDown(Keys.Space))
             {
+                // start het spel
                 gameState = GameState.running;
             }
 
@@ -150,6 +158,12 @@ namespace Pong
 		{
 			GraphicsDevice.Clear(Color.White);
 			spriteBatch.Begin();
+
+            if (gameState == GameState.init)
+            {
+                spriteBatch.DrawString(font1, startMessage, new Vector2((GraphicsDevice.Viewport.Width - messageSize.X) / 2, (GraphicsDevice.Viewport.Height - messageSize.Y) / 2), Color.Black);
+
+            }
 			spriteBatch.Draw(rood, positierood, Color.White);
 			spriteBatch.Draw(blauw, positieblauw, Color.White);
 			foreach (Balletje bal in balletjes)
