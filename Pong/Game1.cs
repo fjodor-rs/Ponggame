@@ -17,6 +17,8 @@ namespace Pong
 		private int levenblauw = 3;
 		private int lijnrood;
 		private int lijnblauw;
+        enum GameState { init, running, gameOver };
+        GameState gameState;
 		readonly Random rand = new Random();
 		List<Balletje> balletjes = new List<Balletje>();
 
@@ -30,10 +32,10 @@ namespace Pong
 
 		
 		protected override void Initialize()
-		{
-			BalReset();
-			base.Initialize();
-		}
+        { 
+            base.Initialize();
+            gameState = GameState.init;
+        }
 
 		protected override void LoadContent()
 		{
@@ -47,11 +49,14 @@ namespace Pong
 			lijnrood = 50 + rood.Width;
 			lijnblauw = GraphicsDevice.Viewport.Width - 50;
 
-			BalReset();
-
+            //balken klaarzetten
 			positierood = new Vector2(50, (GraphicsDevice.Viewport.Height - rood.Height) / 2);
 			positieblauw = new Vector2(lijnblauw, (GraphicsDevice.Viewport.Height - blauw.Height) / 2);
-		}
+
+            //Bal in het midden zetten
+            positiebal.X = (GraphicsDevice.Viewport.Width - bal.Width) / 2;
+            positiebal.Y = (GraphicsDevice.Viewport.Height - bal.Height) / 2;
+        }
 
 		protected override void UnloadContent()
 		{
@@ -65,6 +70,7 @@ namespace Pong
 				positiebalk.Y = GraphicsDevice.Viewport.Height - rood.Height;
 		}
 
+        //De bal versnellen
 		protected void Bounce(ref Vector2 sbal)
 		{
 			sbal.X *= -1;
@@ -110,32 +116,43 @@ namespace Pong
 			}
 		}
 
+        protected void HandleInput()
+        {
+            //De input van speler rood
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+                positierood += new Vector2(0, -speed);
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+                positierood += new Vector2(0, speed);
+
+            //De input van speler blauw
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                positieblauw += new Vector2(0, -speed);
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                positieblauw += new Vector2(0, speed);
+        }
 	
 		protected override void Update(GameTime gameTime)
 		{
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
 				Exit();
 
-			if (Keyboard.GetState().IsKeyDown(Keys.W))
-				positierood += new Vector2(0, -speed);
-			if (Keyboard.GetState().IsKeyDown(Keys.S))
-				positierood += new Vector2(0, speed);
+            if (gameState == GameState.init && Keyboard.GetState().IsKeyDown(Keys.Space))
+            {
+                gameState = GameState.running;
+                BalReset();
+            }
 
-			ScreenBounds(ref positierood);
+            if (gameState == GameState.running)
+                HandleInput();
 
-	
-			if (Keyboard.GetState().IsKeyDown(Keys.Up))
-				positieblauw += new Vector2(0, -speed);
-			if (Keyboard.GetState().IsKeyDown(Keys.Down))
-				positieblauw += new Vector2(0, speed);
-
-			ScreenBounds(ref positieblauw);
+            ScreenBounds(ref positierood); //Houdt de rode balk in het scherm
+            ScreenBounds(ref positieblauw); //Houdt de blauwe balk in het scherm
 
 
 
-			positiebal += snelheidbal;
+			positiebal += snelheidbal; //Verplaatst de bal
 
-			BalBounds(ref positiebal,ref snelheidbal);
+			BalBounds(ref positiebal,ref snelheidbal); //Checkt voor collision
 
 			base.Update(gameTime);
 		}
