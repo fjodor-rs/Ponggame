@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Pong
 {
@@ -19,6 +20,7 @@ namespace Pong
         enum GameState { init, running, gameOver };
         GameState gameState;
 		readonly Random rand = new Random();
+		List<Balletje> balletjes = new List<Balletje>();
 
 
 
@@ -41,6 +43,8 @@ namespace Pong
 			bal = Content.Load<Texture2D>("bal");
 			rood = Content.Load<Texture2D>("rodeSpeler");
 			blauw = Content.Load<Texture2D>("blauweSpeler");
+
+			Balletje.LoadContent(Content);
 
 			lijnrood = 50 + rood.Width;
 			lijnblauw = GraphicsDevice.Viewport.Width - 50;
@@ -160,8 +164,10 @@ namespace Pong
 			spriteBatch.Begin();
 			spriteBatch.Draw(rood, positierood, Color.White);
 			spriteBatch.Draw(blauw, positieblauw, Color.White);
-			spriteBatch.Draw(bal, positiebal, Color.White);
-
+			foreach (Balletje bal in balletje)
+			{
+				balletje.Draw(spriteBatch);
+			}
 			base.Draw(gameTime);
 			spriteBatch.End();
 		}
