@@ -67,11 +67,11 @@ namespace Pong
 		}
 
         //De bal versnellen
-		protected void Bounce(ref Vector2 sbal)
+		protected void Bounce()
 		{
-			sbal.X *= -1;
-			sbal.Y *= 1.08f;
-			sbal.X *= 1.08f;
+			snelheidbal.X *= -1;
+			snelheidbal.Y *= 1.08f;
+			snelheidbal.X *= 1.08f;
 		}
 
 		protected void BalReset()
@@ -83,29 +83,29 @@ namespace Pong
 			snelheidbal = new Vector2((float)Math.Cos(angle) * 4, (float)Math.Sin(angle) * 4);
 		}
 
-		protected void BalBounds(ref Vector2 posbal, ref Vector2 sbal)
+		protected void BalBounds()
 		{
-			if (posbal.Y + sbal.Y < 0)
-				sbal.Y *= -1;
+			if (positiebal.Y + snelheidbal.Y < 0)
+				snelheidbal.Y *= -1;
 
-			if (posbal.Y + sbal.Y > GraphicsDevice.Viewport.Height - bal.Height)
-				sbal.Y *= -1;
+			if (positiebal.Y + snelheidbal.Y > GraphicsDevice.Viewport.Height - bal.Height)
+				snelheidbal.Y *= -1;
 
-			if (posbal.X + sbal.X <= lijnrood && positiebal.X > lijnrood && positiebal.Y > positierood.Y - bal.Height && positiebal.Y < positierood.Y + rood.Height)
-				Bounce(ref sbal);
+			if (positiebal.X + snelheidbal.X <= lijnrood && positiebal.X > lijnrood && positiebal.Y > positierood.Y - bal.Height && positiebal.Y < positierood.Y + rood.Height)
+				Bounce();
 
-			if (posbal.X + sbal.X + bal.Width >= lijnblauw && positiebal.X + bal.Width < lijnblauw && positiebal.Y > positieblauw.Y - bal.Height && positiebal.Y < positieblauw.Y + blauw.Height)
-				Bounce(ref sbal);
+			if (positiebal.X + snelheidbal.X + bal.Width >= lijnblauw && positiebal.X + bal.Width < lijnblauw && positiebal.Y > positieblauw.Y - bal.Height && positiebal.Y < positieblauw.Y + blauw.Height)
+				Bounce();
 
-			if (positiebal.Y + bal.Height + sbal.Y == positierood.Y && posbal.X + sbal.X <= lijnrood && posbal.X <= positierood.X)
-				Bounce(ref sbal);
+			if (positiebal.Y + bal.Height + snelheidbal.Y == positierood.Y && positiebal.X + snelheidbal.X <= lijnrood && positiebal.X <= positierood.X)
+				Bounce();
 
-			if (posbal.X < 0)
+			if (positiebal.X < 0)
 			{
 				levenrood -= 1;
 				BalReset();
 			}
-			if (posbal.X > GraphicsDevice.Viewport.Width - bal.Width)
+			if (positiebal.X > GraphicsDevice.Viewport.Width - bal.Width)
 			{
 				levenblauw -= 1;
 				BalReset();
@@ -148,7 +148,7 @@ namespace Pong
 
 			positiebal += snelheidbal; //Verplaatst de bal
 
-			BalBounds(ref positiebal,ref snelheidbal); //Checkt voor collision
+			BalBounds(); //Checkt voor collision
 
 			base.Update(gameTime);
 		}
