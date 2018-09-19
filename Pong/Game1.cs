@@ -11,7 +11,7 @@ namespace Pong
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 		Vector2 positiebal, positierood, positieblauw, snelheidbal;
-		Texture2D rood, blauw;
+		Texture2D bal, rood, blauw;
 		private float speed = 10;
 		private int levenrood = 3;
 		private int levenblauw = 3;
@@ -35,12 +35,12 @@ namespace Pong
         { 
             base.Initialize();
             gameState = GameState.init;
-			balletjes.Add(new Balletje(new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2)));
         }
 
 		protected override void LoadContent()
 		{
 			spriteBatch = new SpriteBatch(GraphicsDevice);
+			bal = Content.Load<Texture2D>("bal");
 			rood = Content.Load<Texture2D>("rodeSpeler");
 			blauw = Content.Load<Texture2D>("blauweSpeler");
 
@@ -52,6 +52,10 @@ namespace Pong
             //balken klaarzetten
 			positierood = new Vector2(50, (GraphicsDevice.Viewport.Height - rood.Height) / 2);
 			positieblauw = new Vector2(lijnblauw, (GraphicsDevice.Viewport.Height - blauw.Height) / 2);
+
+            //Bal in het midden zetten
+            positiebal.X = (GraphicsDevice.Viewport.Width - bal.Width) / 2;
+            positiebal.Y = (GraphicsDevice.Viewport.Height - bal.Height) / 2;
         }
 
 		protected override void UnloadContent()
@@ -67,11 +71,11 @@ namespace Pong
 		}
 
         //De bal versnellen
-		protected void Bounce(ref Vector2 sbal)
+		protected void Bounce()
 		{
-			sbal.X *= -1;
-			sbal.Y *= 1.08f;
-			sbal.X *= 1.08f;
+			snelheidbal.X *= -1;
+			snelheidbal.Y *= 1.08f;
+			snelheidbal.X *= 1.08f;
 		}
 
 		protected void BalReset()
@@ -85,27 +89,27 @@ namespace Pong
 
 		protected void BalBounds()
 		{
-			if (balletjes[0].Position.Y + sbal.Y < 0)
-				sbal.Y *= -1;
+			if (positiebal.Y + snelheidbal.Y < 0)
+				snelheidbal.Y *= -1;
 
-			if (posbal.Y + sbal.Y > GraphicsDevice.Viewport.Height - bal.Height)
-				sbal.Y *= -1;
+			if (positiebal.Y + snelheidbal.Y > GraphicsDevice.Viewport.Height - bal.Height)
+				snelheidbal.Y *= -1;
 
-			if (posbal.X + sbal.X <= lijnrood && positiebal.X > lijnrood && positiebal.Y > positierood.Y - bal.Height && positiebal.Y < positierood.Y + rood.Height)
-				Bounce(ref sbal);
+			if (positiebal.X + snelheidbal.X <= lijnrood && positiebal.X > lijnrood && positiebal.Y > positierood.Y - bal.Height && positiebal.Y < positierood.Y + rood.Height)
+				Bounce();
 
-			if (posbal.X + sbal.X + bal.Width >= lijnblauw && positiebal.X + bal.Width < lijnblauw && positiebal.Y > positieblauw.Y - bal.Height && positiebal.Y < positieblauw.Y + blauw.Height)
-				Bounce(ref sbal);
+			if (positiebal.X + snelheidbal.X + bal.Width >= lijnblauw && positiebal.X + bal.Width < lijnblauw && positiebal.Y > positieblauw.Y - bal.Height && positiebal.Y < positieblauw.Y + blauw.Height)
+				Bounce();
 
-			if (positiebal.Y + bal.Height + sbal.Y == positierood.Y && posbal.X + sbal.X <= lijnrood && posbal.X <= positierood.X)
-				Bounce(ref sbal);
+			if (positiebal.Y + bal.Height + snelheidbal.Y == positierood.Y && positiebal.X + snelheidbal.X <= lijnrood && positiebal.X <= positierood.X)
+				Bounce();
 
-			if (posbal.X < 0)
+			if (positiebal.X < 0)
 			{
 				levenrood -= 1;
 				BalReset();
 			}
-			if (posbal.X > GraphicsDevice.Viewport.Width - bal.Width)
+			if (positiebal.X > GraphicsDevice.Viewport.Width - bal.Width)
 			{
 				levenblauw -= 1;
 				BalReset();
@@ -148,7 +152,7 @@ namespace Pong
 
 			positiebal += snelheidbal; //Verplaatst de bal
 
-			BalBounds(ref positiebal,ref snelheidbal); //Checkt voor collision
+			BalBounds(); //Checkt voor collision
 
 			base.Update(gameTime);
 		}
@@ -160,7 +164,7 @@ namespace Pong
 			spriteBatch.Begin();
 			spriteBatch.Draw(rood, positierood, Color.White);
 			spriteBatch.Draw(blauw, positieblauw, Color.White);
-			foreach (Balletje balletje in balletjes)
+			foreach (Balletje bal in balletje)
 			{
 				balletje.Draw(spriteBatch);
 			}
