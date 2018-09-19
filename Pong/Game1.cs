@@ -91,7 +91,8 @@ namespace Pong
 			if (posbal.X + sbal.X + bal.Width >= lijnblauw && positiebal.X + bal.Width < lijnblauw && positiebal.Y > positieblauw.Y - bal.Height && positiebal.Y < positieblauw.Y + blauw.Height)
 				Bounce(ref sbal);
 
-			if (positiebal.Y + bal.Height +  == positierood.Y)
+			if (positiebal.Y + bal.Height + sbal.Y == positierood.Y && posbal.X + sbal.X <= lijnrood && posbal.X <= positierood.X)
+				Bounce(ref sbal);
 
 			if (posbal.X < 0)
 			{
