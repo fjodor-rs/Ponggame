@@ -15,6 +15,7 @@ namespace Pong
 		Vector2 position;
 		Vector2 speed;
 		private bool alive;
+        float speedAngle;
 
 		readonly Random rand = new Random();
 
@@ -51,9 +52,10 @@ namespace Pong
 		//De bal versnellen
 		public void Bounce()
 		{
-			speed.X *= -1;
+		    speed.X *= -1;
 			speed.Y *= 1.08f;
 			speed.X *= 1.08f;
+            speedAngle = (float)Math.Atan2(speed.Y, speed.X);
 		}
 
 		public void BalLimit()

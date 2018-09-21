@@ -41,7 +41,7 @@ namespace Pong
             gameState = GameState.init;
             message = "Druk op spatie om te beginnen";
             messageSize = font1.MeasureString(message);
-            message2 = "Druk op spatie om overnieuw te spelen";
+            message2 = "Druk op spatie om te herstarten";
             messageSize2 = font1.MeasureString(message2);
 
 
@@ -50,10 +50,9 @@ namespace Pong
 
 			balletjes.Add(new Balletje(new Vector2(screenheight / 2, screenwidth / 2), bal));
             //positie van de ballen die de levens aan gaan duiden
-            poslevenrood.X = 16;
             poslevenrood.Y = 16;
-            poslevenblauw.X = screenwidth - 16;
             poslevenblauw.Y = 16;
+
         }
 
 		protected override void LoadContent()
@@ -104,7 +103,8 @@ namespace Pong
 				balletjes[0].BalLimit();
 
 			if (balletjes[0].Position.X + balletjes[0].Speed.X <= lijnrood && balletjes[0].Position.X > lijnrood && balletjes[0].Position.Y > positierood.Y - balletjes[0].Height && balletjes[0].Position.Y < positierood.Y + rood.Height)
-				balletjes[0].Bounce();
+                // midden van de bal ten opzichte van het midden van het betje
+                balletjes[0].Bounce();
 
 			if (balletjes[0].Position.X + balletjes[0].Speed.X + balletjes[0].Width >= lijnblauw && balletjes[0].Position.X + balletjes[0].Width < lijnblauw && balletjes[0].Position.Y > positieblauw.Y - balletjes[0].Height && balletjes[0].Position.Y < positieblauw.Y + blauw.Height)
 				balletjes[0].Bounce();
@@ -120,7 +120,7 @@ namespace Pong
 				balletjes[0].BalReset();
 			}
 		}
-
+        //protected 
 		protected void HandleInput()
         {
             //De input van speler rood
@@ -150,12 +150,7 @@ namespace Pong
 
             if (gameState == GameState.gameOver && Keyboard.GetState().IsKeyDown(Keys.Space))
             {
-                levenblauw = 3;
-                levenrood = 3;
-                balletjes[0].BalReset();
-                gameState = GameState.running;
-                positierood = roodStart;
-                positieblauw = blauwStart;
+                
             }
 
                 if (gameState == GameState.running)
