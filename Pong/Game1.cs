@@ -10,14 +10,14 @@ namespace Pong
 	{
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
-		Vector2 positierood, positieblauw;
-		Texture2D rood, blauw;
+		public Vector2 positierood, positieblauw;
+		public Texture2D rood, blauw;
 		private Texture2D bal;
 		private float speed = 10;
-		private int levenrood = 3, levenblauw = 3;
+		public int levenrood = 3, levenblauw = 3;
         Vector2 poslevenrood, poslevenblauw;
-		private int lijnrood, lijnblauw;
-		private int screenheight, screenwidth;
+		public int lijnrood, lijnblauw;
+		public int screenheight, screenwidth;
         enum GameState { init, running, gameOver };
         GameState gameState;
 		List<Balletje> balletjes = new List<Balletje>();
@@ -44,15 +44,13 @@ namespace Pong
             message2 = "Druk op spatie om te herstarten";
             messageSize2 = font1.MeasureString(message2);
 
-
             screenheight = GraphicsDevice.Viewport.Height;
 			screenwidth = GraphicsDevice.Viewport.Width;
 
-			balletjes.Add(new Balletje(new Vector2(screenheight / 2, screenwidth / 2), bal));
+			balletjes.Add(new Balletje(new Vector2(screenheight / 2, screenwidth / 2), bal, this));
             //positie van de ballen die de levens aan gaan duiden
             poslevenrood.Y = 16;
             poslevenblauw.Y = 16;
-
         }
 
 		protected override void LoadContent()
@@ -79,10 +77,6 @@ namespace Pong
 		{
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="positiebalk"></param>
 		protected void ScreenBounds(ref Vector2 positiebalk)
 		{
 			if (positiebalk.Y < 0)
@@ -91,35 +85,7 @@ namespace Pong
 				positiebalk.Y = GraphicsDevice.Viewport.Height - rood.Height;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		protected void BalBounds()
-		{
-			if (balletjes[0].Position.Y + balletjes[0].Speed.Y < 0)
-				balletjes[0].BalLimit();
 
-			if (balletjes[0].Position.Y + balletjes[0].Speed.Y > GraphicsDevice.Viewport.Height - balletjes[0].Height)
-				balletjes[0].BalLimit();
-
-			if (balletjes[0].Position.X + balletjes[0].Speed.X <= lijnrood && balletjes[0].Position.X > lijnrood && balletjes[0].Position.Y > positierood.Y - balletjes[0].Height && balletjes[0].Position.Y < positierood.Y + rood.Height)
-                // midden van de bal ten opzichte van het midden van het betje
-                balletjes[0].Bounce();
-
-			if (balletjes[0].Position.X + balletjes[0].Speed.X + balletjes[0].Width >= lijnblauw && balletjes[0].Position.X + balletjes[0].Width < lijnblauw && balletjes[0].Position.Y > positieblauw.Y - balletjes[0].Height && balletjes[0].Position.Y < positieblauw.Y + blauw.Height)
-				balletjes[0].Bounce();
-
-			if (balletjes[0].Position.X < 0)
-			{
-				levenrood -= 1;
-				balletjes[0].BalReset();
-			}
-			if (balletjes[0].Position.X > GraphicsDevice.Viewport.Width - balletjes[0].Width)
-			{
-				levenblauw -= 1;
-				balletjes[0].BalReset();
-			}
-		}
         //protected 
 		protected void HandleInput()
         {
@@ -150,7 +116,12 @@ namespace Pong
 
             if (gameState == GameState.gameOver && Keyboard.GetState().IsKeyDown(Keys.Space))
             {
-                
+                 levenblauw = 3;
+                levenrood = 3;
+                balletjes[0].BalReset();
+                gameState = GameState.running;
+                positierood = roodStart;
+                positieblauw = blauwStart;
             }
 
                 if (gameState == GameState.running)
@@ -161,7 +132,7 @@ namespace Pong
 
 			balletjes[0].Update();
 
-			BalBounds(); //Checkt voor collision
+			balletjes[0].BalBounds(); //Checkt voor collision
 
             //controleert de levens
             if (levenblauw == 0 && gameState == GameState.running)

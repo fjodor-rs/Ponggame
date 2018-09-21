@@ -16,6 +16,7 @@ namespace Pong
 		Vector2 speed;
 		private bool alive;
         float speedAngle;
+		Game1 game;
 
 		readonly Random rand = new Random();
 
@@ -24,10 +25,12 @@ namespace Pong
 		{
 		}
 
-		public Balletje(Vector2 position, Texture2D texture)
+		public Balletje(Vector2 position, Texture2D texture, Game1 game)
 		{
 			this.position = position;
 			this.texture = texture;
+			this.game = game;
+
 		}
 
 		public Vector2 Speed { get { return speed; } }
@@ -58,7 +61,34 @@ namespace Pong
             speedAngle = (float)Math.Atan2(speed.Y, speed.X);
 		}
 
-		public void BalLimit()
+		public void BalBounds()
+		{
+			if (position.Y + speed.Y < 0)
+				BalLimit();
+
+			if (position.Y + speed.Y > game.screenheight - texture.Height)
+				BalLimit();
+
+			if (position.X + speed.X <= game.lijnrood && position.X > game.lijnrood && position.Y > game.positierood.Y - texture.Height && position.Y < game.positierood.Y + game.rood.Height)
+				// midden van de bal ten opzichte van het midden van het betje
+				Bounce();
+
+			if (position.X + speed.X + texture.Width >= game.lijnblauw && position.X + texture.Width < game.lijnblauw && position.Y > game.positieblauw.Y - texture.Height && position.Y < game.positieblauw.Y + game.blauw.Height)
+				Bounce();
+
+			if (position.X < 0)
+			{
+				game.levenrood -= 1;
+				BalReset();
+			}
+			if (position.X > game.screenwidth - texture.Width)
+			{
+				game.levenblauw -= 1;
+				BalReset();
+			}
+		}
+
+			public void BalLimit()
 		{
 			speed.Y *= -1;
 		}
