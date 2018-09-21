@@ -62,6 +62,12 @@ namespace Pong
 			speed.Y *= -1;
 		}
 
+        public void BalStop()
+        {
+            speed.X = 0;
+            speed.Y = 0;
+        }
+
 		public void BalReset()
 		{
 			position = new Vector2(800 / 2, 480 / 2);
