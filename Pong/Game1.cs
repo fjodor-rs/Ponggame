@@ -21,7 +21,7 @@ namespace Pong
         enum GameState { init, running, gameOver };
         GameState gameState;
 		List<Balletje> balletjes = new List<Balletje>();
-        SpriteFont font1;
+		SpriteFont font1;
         string message, message2;
         Vector2 messageSize, messageSize2;
         Vector2 roodStart, blauwStart;
@@ -49,7 +49,6 @@ namespace Pong
 			screenwidth = GraphicsDevice.Viewport.Width;
 
 			balletjes.Add(new Balletje(new Vector2(screenheight / 2, screenwidth / 2), bal));
-
             //positie van de ballen die de levens aan gaan duiden
             poslevenrood.X = 16;
             poslevenrood.Y = 16;
