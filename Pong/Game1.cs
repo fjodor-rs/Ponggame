@@ -45,9 +45,10 @@ namespace Pong
 
 			screenheight = GraphicsDevice.Viewport.Height;
 			screenwidth = GraphicsDevice.Viewport.Width;
+
 			balletjes.Add(new Balletje(new Vector2(screenheight / 2, screenwidth / 2), bal));
 
-			balletjes[0].BalReset();
+			balletjes[0].BalReset();	
         }
 
 		protected override void LoadContent()
@@ -59,7 +60,6 @@ namespace Pong
             
 			bal = Content.Load<Texture2D>("bal");
 			
-
 			lijnrood = 50 + rood.Width;
 			lijnblauw = GraphicsDevice.Viewport.Width - (50 + blauw.Width);
 
@@ -166,12 +166,16 @@ namespace Pong
             }
 			spriteBatch.Draw(rood, positierood, Color.White);
 			spriteBatch.Draw(blauw, positieblauw, Color.White);
+			
 			foreach (Balletje bal in balletjes)
-			{
-				bal.Draw(spriteBatch);
-			}
+				if(bal.Alive)
+					{
+						bal.Draw(spriteBatch);
+					}
 			base.Draw(gameTime);
 			spriteBatch.End();
 		}
+
+
 	}
 }
