@@ -22,8 +22,9 @@ namespace Pong
         GameState gameState;
 		List<Balletje> balletjes = new List<Balletje>();
         SpriteFont font1;
-        string startMessage;
-        Vector2 messageSize;
+        string message, message2;
+        Vector2 messageSize, messageSize2;
+        Vector2 roodStart, blauwStart;
 
 
 
@@ -38,12 +39,16 @@ namespace Pong
         { 
             base.Initialize();
             gameState = GameState.init;
-            startMessage = "Druk op spatie om te beginnen";
-            messageSize = font1.MeasureString(startMessage);
+            message = "Druk op spatie om te beginnen";
+            messageSize = font1.MeasureString(message);
+            message2 = "Druk op spatie om overnieuw te spelen";
+            messageSize2 = font1.MeasureString(message2);
 
-			screenheight = GraphicsDevice.Viewport.Height;
+
+            screenheight = GraphicsDevice.Viewport.Height;
 			screenwidth = GraphicsDevice.Viewport.Width;
 			balletjes.Add(new Balletje(new Vector2(screenheight / 2, screenwidth / 2), bal));
+            balletjes[0].BalStop();
 
             //positie van de ballen die de levens aan gaan duiden
             poslevenrood.X = 16;
@@ -66,8 +71,10 @@ namespace Pong
 			lijnblauw = GraphicsDevice.Viewport.Width - (50 + blauw.Width);
 
             //balken klaarzetten
-			positierood = new Vector2(50, (GraphicsDevice.Viewport.Height - rood.Height) / 2);
-			positieblauw = new Vector2(lijnblauw, (GraphicsDevice.Viewport.Height - blauw.Height) / 2);
+            roodStart = new Vector2(50, (GraphicsDevice.Viewport.Height - rood.Height) / 2);
+            blauwStart = new Vector2(lijnblauw, (GraphicsDevice.Viewport.Height - blauw.Height) / 2);
+            positierood = roodStart;
+			positieblauw = blauwStart;
 
         }
 
@@ -136,13 +143,24 @@ namespace Pong
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
 				Exit();
 
+            // start het spel
             if (gameState == GameState.init && Keyboard.GetState().IsKeyDown(Keys.Space))
             {
-                // start het spel
                 gameState = GameState.running;
+                balletjes[0].BalReset();
             }
 
-            if (gameState == GameState.running)
+            if (gameState == GameState.gameOver && Keyboard.GetState().IsKeyDown(Keys.Space))
+            {
+                levenblauw = 3;
+                levenrood = 3;
+                balletjes[0].BalReset();
+                gameState = GameState.running;
+                positierood = roodStart;
+                positieblauw = blauwStart;
+            }
+
+                if (gameState == GameState.running)
                 HandleInput();
 
             ScreenBounds(ref positierood); //Houdt de rode balk in het scherm
@@ -151,6 +169,23 @@ namespace Pong
 			balletjes[0].Update();
 
 			BalBounds(); //Checkt voor collision
+
+            //controleert de levens
+            if (levenblauw == 0 && gameState == GameState.running)
+            {
+                gameState = GameState.gameOver;
+                message = "Rood heeft gewonnen!";
+                messageSize = font1.MeasureString(message);
+                balletjes[0].BalStop(); //moet nog voor ieder balletje
+            }
+
+            if (levenrood == 0 && gameState == GameState.running)
+            {
+                gameState = GameState.gameOver;
+                message = "Blauw heeft gewonnen!";
+                messageSize = font1.MeasureString(message);
+                balletjes[0].BalStop(); //moet nog voor ieder balletje
+            }
 
 			base.Update(gameTime);
 		}
@@ -175,10 +210,17 @@ namespace Pong
             //Start message aan het begin van het spel
             if (gameState == GameState.init)
             {
-                spriteBatch.DrawString(font1, startMessage, new Vector2((screenwidth - messageSize.X) / 2, (screenheight - messageSize.Y) / 2), Color.Black);
+                spriteBatch.DrawString(font1, message, new Vector2((screenwidth - messageSize.X) / 2, (screenheight - messageSize.Y) / 2), Color.Black);
             }
 
-			spriteBatch.Draw(rood, positierood, Color.White);
+            //message als iemand gewonnen heeft
+            if (gameState == GameState.gameOver)
+            {
+                spriteBatch.DrawString(font1, message, new Vector2((screenwidth - messageSize.X) / 2, (screenheight - messageSize.Y) / 2), Color.Black);
+                spriteBatch.DrawString(font1, message2, new Vector2((screenwidth - messageSize2.X) / 2, (screenheight - (messageSize2.Y * 2) - 20) / 2), Color.Black);
+            }
+
+            spriteBatch.Draw(rood, positierood, Color.White);
 			spriteBatch.Draw(blauw, positieblauw, Color.White);
 			foreach (Balletje bal in balletjes)
 			{
