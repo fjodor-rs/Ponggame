@@ -14,12 +14,10 @@ namespace Pong
 		Texture2D rood, blauw;
 		private Texture2D bal;
 		private float speed = 10;
-		private int levenrood = 3;
-		private int levenblauw = 3;
-		private int lijnrood;
-		private int lijnblauw;
-		private int screenheight;
-		private int screenwidth;
+		private int levenrood = 3, levenblauw = 3;
+        Vector2 poslevenrood, poslevenblauw;
+		private int lijnrood, lijnblauw;
+		private int screenheight, screenwidth;
         enum GameState { init, running, gameOver };
         GameState gameState;
 		List<Balletje> balletjes = new List<Balletje>();
@@ -47,7 +45,11 @@ namespace Pong
 			screenwidth = GraphicsDevice.Viewport.Width;
 			balletjes.Add(new Balletje(new Vector2(screenheight / 2, screenwidth / 2), bal));
 
-			balletjes[0].BalReset();
+            //positie van de ballen die de levens aan gaan duiden
+            poslevenrood.X = 16;
+            poslevenrood.Y = 16;
+            poslevenblauw.X = screenwidth - 16;
+            poslevenblauw.Y = 16;
         }
 
 		protected override void LoadContent()
@@ -159,11 +161,23 @@ namespace Pong
 			GraphicsDevice.Clear(Color.White);
 			spriteBatch.Begin();
 
+            for (var i = 0; i < levenrood; i++)
+            {
+                poslevenrood.X = 16 + i * bal.Width;
+                spriteBatch.Draw(bal, poslevenrood, Color.White);
+            }
+            for (var i = 0; i < levenblauw; i++)
+            {
+                poslevenblauw.X = screenwidth - 16 - (i + 1) * bal.Width;
+                spriteBatch.Draw(bal, poslevenblauw, Color.White);
+            }
+
+            //Start message aan het begin van het spel
             if (gameState == GameState.init)
             {
-                spriteBatch.DrawString(font1, startMessage, new Vector2((GraphicsDevice.Viewport.Width - messageSize.X) / 2, (GraphicsDevice.Viewport.Height - messageSize.Y) / 2), Color.Black);
-
+                spriteBatch.DrawString(font1, startMessage, new Vector2((screenwidth - messageSize.X) / 2, (screenheight - messageSize.Y) / 2), Color.Black);
             }
+
 			spriteBatch.Draw(rood, positierood, Color.White);
 			spriteBatch.Draw(blauw, positieblauw, Color.White);
 			foreach (Balletje bal in balletjes)
