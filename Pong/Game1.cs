@@ -49,7 +49,6 @@ namespace Pong
 			screenwidth = GraphicsDevice.Viewport.Width;
 
 			balletjes.Add(new Balletje(new Vector2(screenheight / 2, screenwidth / 2), bal));
-            balletjes[0].BalStop();
 
             //positie van de ballen die de levens aan gaan duiden
             poslevenrood.X = 16;
@@ -176,7 +175,6 @@ namespace Pong
                 gameState = GameState.gameOver;
                 message = "Rood heeft gewonnen!";
                 messageSize = font1.MeasureString(message);
-                balletjes[0].BalStop(); //moet nog voor ieder balletje
             }
 
             if (levenrood == 0 && gameState == GameState.running)
@@ -184,7 +182,6 @@ namespace Pong
                 gameState = GameState.gameOver;
                 message = "Blauw heeft gewonnen!";
                 messageSize = font1.MeasureString(message);
-                balletjes[0].BalStop(); //moet nog voor ieder balletje
             }
 
 			base.Update(gameTime);
@@ -198,12 +195,12 @@ namespace Pong
 
             for (var i = 0; i < levenrood; i++)
             {
-                poslevenrood.X = 16 + i * bal.Width;
+                poslevenrood.X = lijnrood + 16 + i * bal.Width;
                 spriteBatch.Draw(bal, poslevenrood, Color.White);
             }
             for (var i = 0; i < levenblauw; i++)
             {
-                poslevenblauw.X = screenwidth - 16 - (i + 1) * bal.Width;
+                poslevenblauw.X = (lijnblauw - 16) - (i + 1) * bal.Width;
                 spriteBatch.Draw(bal, poslevenblauw, Color.White);
             }
 
@@ -218,7 +215,8 @@ namespace Pong
             {
                 spriteBatch.DrawString(font1, message, new Vector2((screenwidth - messageSize.X) / 2, (screenheight - messageSize.Y) / 2), Color.Black);
                 spriteBatch.DrawString(font1, message2, new Vector2((screenwidth - messageSize2.X) / 2, (screenheight - (messageSize2.Y * 2) - 20) / 2), Color.Black);
-            }
+				balletjes[0].Alive = false;
+			}
 
             spriteBatch.Draw(rood, positierood, Color.White);
 			spriteBatch.Draw(blauw, positieblauw, Color.White);

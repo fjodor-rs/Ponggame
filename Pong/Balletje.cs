@@ -27,7 +27,6 @@ namespace Pong
 		{
 			this.position = position;
 			this.texture = texture;
-			BalReset();
 		}
 
 		public Vector2 Speed { get { return speed; } }
@@ -61,12 +60,6 @@ namespace Pong
 		{
 			speed.Y *= -1;
 		}
-
-        public void BalStop()
-        {
-            speed.X = 0;
-            speed.Y = 0;
-        }
 
 		public void BalReset()
 		{
