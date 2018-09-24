@@ -116,7 +116,7 @@ namespace Pong
 
             if (gameState == GameState.gameOver && Keyboard.GetState().IsKeyDown(Keys.Space))
             {
-                 levenblauw = 3;
+                levenblauw = 3;
                 levenrood = 3;
                 balletjes[0].BalReset();
                 gameState = GameState.running;

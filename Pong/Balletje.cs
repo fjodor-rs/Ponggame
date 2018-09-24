@@ -53,13 +53,58 @@ namespace Pong
 		}
 
 		//De bal versnellen
-		public void Bounce()
+		public void Bounce(float balk)
 		{
-		    speed.X *= -1;
+            float relpos, addAngle;
+            int hitboxHeight = game.rood.Height + texture.Height;
+            float balOrigin = position.Y + (texture.Height / 2);
+            speed.X *= -1;
 			speed.Y *= 1.08f;
 			speed.X *= 1.08f;
+            float x2 = speed.X * speed.X;
+            float y2 = speed.Y * speed.Y;
             speedAngle = (float)Math.Atan2(speed.Y, speed.X);
-		}
+            float speedSum = (float)Math.Sqrt(x2 + y2);
+
+            //positie t.o.v. het midden van het balkje
+            //game.positierood.Y - texture.Height && position.Y < game.positierood.Y + game.rood.Height
+            int balkmidden = (int)balk - texture.Height + hitboxHeight / 2;
+
+            //relatieve positie van de bal ten opzichte van het midden van de balk tot het uiteinde van de balk, op een schaal van -1 tot 1
+            relpos = (balOrigin - balkmidden) / (hitboxHeight / 2);
+            if (relpos < 0)
+                relpos *= -1;
+            Console.WriteLine("relpos = " + relpos);
+            addAngle = relpos * (30 * (MathHelper.Pi / 180));
+            
+            if (speed.Y <= 0 && balOrigin >= balkmidden)
+            {
+                speedAngle -= addAngle;
+            }
+            else if (speed.Y >= 0 && balOrigin <= balkmidden)
+            {
+                speedAngle -= addAngle;
+            }
+            else
+            {
+                speedAngle += addAngle;
+            }
+            
+            if (balOrigin >= balkmidden)
+            {
+                speedAngle -= addAngle;
+            }
+            else
+            {
+                speedAngle += addAngle;
+            }
+
+            speed.Y = (float)Math.Sin(speedAngle) * speedSum;
+            speed.X = (float)Math.Cos(speedAngle) * speedSum;
+            
+            
+
+        }
 
 		public void BalBounds()
 		{
@@ -70,11 +115,10 @@ namespace Pong
 				BalLimit();
 
 			if (position.X + speed.X <= game.lijnrood && position.X > game.lijnrood && position.Y > game.positierood.Y - texture.Height && position.Y < game.positierood.Y + game.rood.Height)
-				// midden van de bal ten opzichte van het midden van het betje
-				Bounce();
+				Bounce(game.positierood.Y);
 
 			if (position.X + speed.X + texture.Width >= game.lijnblauw && position.X + texture.Width < game.lijnblauw && position.Y > game.positieblauw.Y - texture.Height && position.Y < game.positieblauw.Y + game.blauw.Height)
-				Bounce();
+				Bounce(game.positieblauw.Y);
 
 			if (position.X < 0)
 			{
