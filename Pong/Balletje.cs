@@ -140,6 +140,11 @@ namespace Pong
 		public void Update()
 		{
 			position += speed;
+
+            //Zorgt ervoor dat de bal stil staat als ie niet getekent wordt
+            if (!alive && speed != Vector2.Zero)
+                speed = Vector2.Zero;
+
 		}
 	}
 }
