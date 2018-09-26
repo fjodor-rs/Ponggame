@@ -48,11 +48,7 @@ namespace Pong
 			spriteBatch.Draw(texture, position, Color.White);
 		}
 
-		public void BalDelete()
-		{
-		}
-
-		//De bal versnellen
+		//De nieuwe hoek van de bal berekenen
 		public void Bounce(float balk)
 		{
             float relpos, addAngle;
@@ -65,47 +61,35 @@ namespace Pong
             float y2 = speed.Y * speed.Y;
             speedAngle = (float)Math.Atan2(speed.Y, speed.X);
             float speedSum = (float)Math.Sqrt(x2 + y2);
-
-            //positie t.o.v. het midden van het balkje
-            //game.positierood.Y - texture.Height && position.Y < game.positierood.Y + game.rood.Height
             int balkmidden = (int)balk - texture.Height + hitboxHeight / 2;
 
-            //relatieve positie van de bal ten opzichte van het midden van de balk tot het uiteinde van de balk, op een schaal van -1 tot 1
-            relpos = (balOrigin - balkmidden) / (hitboxHeight / 2);
-            if (relpos < 0)
-                relpos *= -1;
+            //relatieve positie van de bal ten opzichte van het midden van de balk tot het uiteinde van de balk, op een schaal van 0 tot 1
+            relpos = Math.Abs((balOrigin - balkmidden) / (hitboxHeight / 2));
             Console.WriteLine("relpos = " + relpos);
             addAngle = relpos * (30 * (MathHelper.Pi / 180));
-            
-            if (speed.Y <= 0 && balOrigin >= balkmidden)
+
+            if (speed.X > 0 && balOrigin >= balkmidden) //onderin linker balk
             {
-                speedAngle -= addAngle;
-            }
-            else if (speed.Y >= 0 && balOrigin <= balkmidden)
+                speedAngle += addAngle; //afbuigen naar onder
+            } 
+            else if (speed.X < 0 && balOrigin >= balkmidden) //onderin rechter balk
             {
-                speedAngle -= addAngle;
-            }
-            else
+                speedAngle -= addAngle; //afbuigen naar onder
+            } else if (speed.X < 0 && balOrigin < balkmidden) //bovenin linker balk
             {
-                speedAngle += addAngle;
-            }
-            
-            if (balOrigin >= balkmidden)
+                speedAngle += addAngle; //afbuigen naar boven
+            } else if (speed.X > 0 && balOrigin < balkmidden) //bovenin rechter balk
             {
-                speedAngle -= addAngle;
-            }
-            else
-            {
-                speedAngle += addAngle;
+                speedAngle -= addAngle; //afbuigen naar boven
             }
 
+            //Snelheidsvector updaten
             speed.Y = (float)Math.Sin(speedAngle) * speedSum;
-            speed.X = (float)Math.Cos(speedAngle) * speedSum;
-            
-            
+            speed.X = (float)Math.Cos(speedAngle) * speedSum; 
 
         }
-
+        
+        //Regelt de collision tussen de bal, de randen van het scherm en de balken (spelers). Haalt ook levens er van af indien de bal gemist wordt.
 		public void BalBounds()
 		{
 			if (position.Y + speed.Y < 0)

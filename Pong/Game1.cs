@@ -59,13 +59,11 @@ namespace Pong
 			rood = Content.Load<Texture2D>("rodeSpeler");
 			blauw = Content.Load<Texture2D>("blauweSpeler");
             font1 = Content.Load<SpriteFont>("font1");
-            
 			bal = Content.Load<Texture2D>("bal");
 			
+            //balken klaarzetten
 			lijnrood = 50 + rood.Width;
 			lijnblauw = GraphicsDevice.Viewport.Width - (50 + blauw.Width);
-
-            //balken klaarzetten
             roodStart = new Vector2(50, (GraphicsDevice.Viewport.Height - rood.Height) / 2);
             blauwStart = new Vector2(lijnblauw, (GraphicsDevice.Viewport.Height - blauw.Height) / 2);
             positierood = roodStart;
@@ -77,6 +75,7 @@ namespace Pong
 		{
 		}
 
+        //Houdt de balken binnen het scherm
 		protected void ScreenBounds(ref Vector2 positiebalk)
 		{
 			if (positiebalk.Y < 0)
@@ -85,8 +84,6 @@ namespace Pong
 				positiebalk.Y = GraphicsDevice.Viewport.Height - rood.Height;
 		}
 
-
-        //protected 
 		protected void HandleInput()
         {
             //De input van speler rood
@@ -114,6 +111,7 @@ namespace Pong
                 balletjes[0].BalReset();
             }
 
+            //Herstart het spel nadat een van de spelers heeft gewonnen
             if (gameState == GameState.gameOver && Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 levenblauw = 3;
@@ -158,6 +156,7 @@ namespace Pong
 			GraphicsDevice.Clear(Color.White);
 			spriteBatch.Begin();
 
+            //Tekent de levens op het scherm
             for (var i = 0; i < levenrood; i++)
             {
                 poslevenrood.X = lijnrood + 16 + i * bal.Width;
